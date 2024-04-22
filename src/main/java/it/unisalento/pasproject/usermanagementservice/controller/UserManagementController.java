@@ -7,8 +7,10 @@ import it.unisalento.pasproject.usermanagementservice.dto.UserListDTO;
 import it.unisalento.pasproject.usermanagementservice.exceptions.UserNotFoundException;
 import it.unisalento.pasproject.usermanagementservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +90,7 @@ public class UserManagementController {
      * @param filter The UserFilterDTO containing the filters.
      * @return UserListDTO containing a list of users that match the filters.
      */
-    @PostMapping("/find")
+    @PostMapping(value = "/find", consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserListDTO getByFilters(@RequestBody UserFilterDTO filter) {
         UserListDTO userListDTO = new UserListDTO();
         ArrayList<UserDTO> list = new ArrayList<>();
