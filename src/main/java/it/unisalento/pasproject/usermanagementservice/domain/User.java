@@ -16,5 +16,5 @@ public class User {
     private String name;
     private String surname;
     private String role;
-    private boolean enabled;
+    private Boolean enabled;
 }
