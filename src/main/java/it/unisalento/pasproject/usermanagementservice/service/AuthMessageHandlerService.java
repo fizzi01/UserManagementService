@@ -2,7 +2,6 @@ package it.unisalento.pasproject.usermanagementservice.service;
 
 import it.unisalento.pasproject.usermanagementservice.domain.User;
 import it.unisalento.pasproject.usermanagementservice.dto.UserDTO;
-import it.unisalento.pasproject.usermanagementservice.repositories.UserRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ public class AuthMessageHandlerService {
         user.setSurname(userDTO.getSurname());
         user.setRole(userDTO.getRole());
         user.setEnabled(true);
+        user.setRegistrationDate(userDTO.getRegistrationDate());
 
         // Save User to MongoDB
         userService.createUser(user);
