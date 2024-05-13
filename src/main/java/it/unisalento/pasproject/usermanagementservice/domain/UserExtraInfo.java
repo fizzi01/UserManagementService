@@ -7,17 +7,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+
 @Getter
 @Setter
-@Document(collection = "user")
-public class User {
-
+@Document(collection = "userExtraInfo")
+public class UserExtraInfo {
     @Id
     private String id;
-    private String email;
-    private String name;
-    private String surname;
-    private String role;
-    private LocalDateTime registrationDate;
-    private Boolean enabled;
+    private String userId;
+    private String residenceCity;
+    private String residenceAddress;
+    private String phoneNumber;
+    private String fiscalCode;
+    private LocalDateTime birthDate;
 }

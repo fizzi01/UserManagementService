@@ -1,25 +1,20 @@
 package it.unisalento.pasproject.usermanagementservice.service;
 
-import it.unisalento.pasproject.usermanagementservice.business.io.producer.RabbitMQProducer;
 import it.unisalento.pasproject.usermanagementservice.domain.User;
 import it.unisalento.pasproject.usermanagementservice.dto.UserSecurityDTO;
 import it.unisalento.pasproject.usermanagementservice.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SecurityMessageHandlerService {
-
-
     @Autowired
     private UserService userService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityMessageHandlerService.class);
-
 
     // Listener generico che processa richieste di qualsiasi tipo
     @RabbitListener(queues = "${rabbitmq.queue.security.name}")

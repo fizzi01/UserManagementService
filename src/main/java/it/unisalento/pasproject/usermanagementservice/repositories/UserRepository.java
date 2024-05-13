@@ -16,7 +16,7 @@ public interface UserRepository extends MongoRepository<User, String> {
      * @param email L'email dell'utente da cercare.
      * @return L'utente corrispondente all'email specificata.
      */
-    public User findByEmail(String email);
+    User findByEmail(String email);
 
     /**
      * Cerca un utente per email e abilitato.
@@ -24,7 +24,7 @@ public interface UserRepository extends MongoRepository<User, String> {
      * @param enabled Lo stato di abilitazione dell'utente da cercare.
      * @return L'utente corrispondente all'email e abilitato specificati.
      */
-    public User findByEmailAndEnabled(String email, boolean enabled);
+    User findByEmailAndEnabled(String email, boolean enabled);
 
     //Metodi combinando ruolo ed enable
     /**
@@ -34,17 +34,14 @@ public interface UserRepository extends MongoRepository<User, String> {
      * @param enabled Lo stato di abilitazione dell'utente da cercare.
      * @return L'utente corrispondente all'email, ruolo e abilitato specificati.
      */
-    public User findByEmailAndRoleAndEnabled(String email, String role, boolean enabled);
-
-
-
+    User findByEmailAndRoleAndEnabled(String email, String role, boolean enabled);
 
     /**
      * Verifica l'esistenza di un utente per email.
      * @param email L'email dell'utente da verificare.
      * @return True se l'utente esiste, False altrimenti.
      */
-    public boolean existsByEmailAndEnabled(String email, boolean enabled);
+    boolean existsByEmailAndEnabled(String email, boolean enabled);
 
 
     /**
@@ -52,5 +49,5 @@ public interface UserRepository extends MongoRepository<User, String> {
      * @param email L'email dell'utente da verificare.
      * @return True se l'utente esiste, False altrimenti.
      */
-    public boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
 }

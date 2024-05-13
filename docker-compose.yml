@@ -1,13 +1,11 @@
-version: "3.8"
-
 services:
 
   userman-service:
     image: openjdk:22-jdk-oracle
     container_name: usermanimage
     ports:
-      - 8081:8080
-      - 8001:8000
+      - "8081:8080"
+      - "8001:8000"
     expose:
       - "8001"
     depends_on:
@@ -15,7 +13,7 @@ services:
     networks:
       - userman-net
     volumes:
-      - ./build/libs/UserManagementService-v0.0.1.jar:/app/app.jar
+      - ./build/libs/UserManagementService-v0.0.4.jar:/app/app.jar
     working_dir: /app
     entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
 
@@ -23,7 +21,7 @@ services:
     image: mongo:latest
     container_name: usermandb
     ports:
-      - 27016:27017
+      - "27016:27017"
     volumes:
       - mongo_userman:/etc/mongo
       - mongo_userman_data:/data/db

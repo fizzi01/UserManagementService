@@ -1,6 +1,7 @@
 package it.unisalento.pasproject.usermanagementservice.controller;
 
 import it.unisalento.pasproject.usermanagementservice.domain.User;
+import it.unisalento.pasproject.usermanagementservice.domain.UserExtraInfo;
 import it.unisalento.pasproject.usermanagementservice.dto.UserDTO;
 import it.unisalento.pasproject.usermanagementservice.dto.UserFilterDTO;
 import it.unisalento.pasproject.usermanagementservice.dto.UserListDTO;
@@ -18,8 +19,12 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserManagementController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserManagementController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Get all users.
@@ -33,7 +38,12 @@ public class UserManagementController {
 
         List<User> users = userService.getAllUsers();
         for (User user : users) {
-            list.add(userService.domainToDto(user));
+            UserDTO userDTO = userService.domainToDto(user);
+            UserExtraInfo userExtraInfo = userService.getUserExtraInfoByUserId(user.getId());
+            if (userExtraInfo != null) {
+                userDTO = userService.domainToDto(userDTO, userExtraInfo);
+            }
+            list.add(userDTO);
         }
 
         return userListDTO;

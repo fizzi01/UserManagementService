@@ -9,13 +9,14 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class UserDTO {
-    private String email;
+public class UpdatedProfileMessageDTO {
     private String name;
     private String surname;
+    private String email;
+    private String role;
+    private boolean isEnabled;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime registrationDate;
-    private String role;
     private String residenceCity;
     private String residenceAddress;
     private String phoneNumber;

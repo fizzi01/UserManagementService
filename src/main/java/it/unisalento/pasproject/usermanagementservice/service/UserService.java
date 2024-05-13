@@ -1,8 +1,12 @@
 package it.unisalento.pasproject.usermanagementservice.service;
 
 import it.unisalento.pasproject.usermanagementservice.domain.User;
+import it.unisalento.pasproject.usermanagementservice.domain.UserExtraInfo;
 import it.unisalento.pasproject.usermanagementservice.dto.UserDTO;
+import it.unisalento.pasproject.usermanagementservice.repositories.UserExtraInfoRepository;
 import it.unisalento.pasproject.usermanagementservice.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -10,15 +14,25 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final UserExtraInfoRepository userExtraInfoRepository;
+
+    private final MongoTemplate mongoTemplate;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    public UserService(UserRepository userRepository, UserExtraInfoRepository userExtraInfoRepository,MongoTemplate mongoTemplate) {
+        this.userRepository = userRepository;
+        this.mongoTemplate = mongoTemplate;
+        this.userExtraInfoRepository = userExtraInfoRepository;
+    }
 
     /**
      * Get all users.
@@ -66,6 +80,13 @@ public class UserService {
         //TODO: Aggiorna il campo enable dell'utente
     }
 
+    public List<UserExtraInfo> getAllUserExtraInfo() {
+        return userExtraInfoRepository.findAll();
+    }
+
+    public UserExtraInfo getUserExtraInfoByUserId(String userId) {
+        return userExtraInfoRepository.findByUserId(userId);
+    }
 
     /**
      * Find users based on provided filters.
@@ -107,10 +128,20 @@ public class UserService {
      */
     public UserDTO domainToDto(User user) {
         UserDTO userDTO = new UserDTO();
-        userDTO.setEmail(user.getEmail());
-        userDTO.setName(user.getName());
-        userDTO.setSurname(user.getSurname());
-        userDTO.setRole(user.getRole());
+        Optional.ofNullable(user.getEmail()).ifPresent(userDTO::setEmail);
+        Optional.ofNullable(user.getName()).ifPresent(userDTO::setName);
+        Optional.ofNullable(user.getSurname()).ifPresent(userDTO::setSurname);
+        Optional.ofNullable(user.getRegistrationDate()).ifPresent(userDTO::setRegistrationDate);
+        Optional.ofNullable(user.getRole()).ifPresent(userDTO::setRole);
+        return userDTO;
+    }
+
+    public UserDTO domainToDto(UserDTO userDTO, UserExtraInfo userExtraInfo) {
+        Optional.ofNullable(userExtraInfo.getResidenceCity()).ifPresent(userDTO::setResidenceCity);
+        Optional.ofNullable(userExtraInfo.getResidenceAddress()).ifPresent(userDTO::setResidenceAddress);
+        Optional.ofNullable(userExtraInfo.getPhoneNumber()).ifPresent(userDTO::setPhoneNumber);
+        Optional.ofNullable(userExtraInfo.getFiscalCode()).ifPresent(userDTO::setFiscalCode);
+        Optional.ofNullable(userExtraInfo.getBirthDate()).ifPresent(userDTO::setBirthDate);
         return userDTO;
     }
 }

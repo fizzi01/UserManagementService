@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // ------  SECURITY  ------
+    // ------  SECURITY  ------ //
 
     // Needed by authentication service
     @Value("${rabbitmq.queue.security.name}")
@@ -42,11 +42,11 @@ public class RabbitMQConfig {
                 .with(securityRequestRoutingKey);
     }
 
-    // ------  END SECURITY  ------
+    // ------  END SECURITY  ------ //
 
 
 
-    // ------  DATA  ------
+    // ------  AUTH DATA  ------ //
 
     // Needed by user management service
     @Value("${rabbitmq.queue.data.name}")
@@ -76,9 +76,38 @@ public class RabbitMQConfig {
                 .with(dataRoutingKey);
     }
 
-    // ------  END DATA  ------
+    // ------  END AUTH DATA  ------ //
 
+    // ------  PROFILE DATA  ------ //
 
+    @Value("${rabbitmq.queue.update.name}")
+    private String updatedDataQueue;
+
+    @Value("${rabbitmq.exchange.update.name}")
+    private String updatedDateExchange;
+
+    @Value("${rabbitmq.routing.update.key}")
+    private String updatedDataRoutingKey;
+
+    @Bean
+    public Queue updatedDataQueue() {
+        return new Queue(updatedDataQueue);
+    }
+
+    @Bean
+    public TopicExchange updatedDataExchange() {
+        return new TopicExchange(updatedDateExchange);
+    }
+
+    @Bean
+    public Binding updatedDataBinding() {
+        return BindingBuilder
+                .bind(updatedDataExchange())
+                .to(updatedDataExchange())
+                .with(updatedDataRoutingKey);
+    }
+
+    // ------  END PROFILE DATA  ------ //
 
     /**
      * Creates a message converter for JSON messages.
