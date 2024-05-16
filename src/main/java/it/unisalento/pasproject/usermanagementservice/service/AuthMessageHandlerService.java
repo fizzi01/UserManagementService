@@ -49,7 +49,7 @@ public class AuthMessageHandlerService {
     }
 
     @RabbitListener(queues = "${rabbitmq.queue.update.name}")
-    public void receiveMessage(UpdatedProfileMessageDTO updatedProfileMessageDTO) {
+    public void receiveUpdateMessage(UpdatedProfileMessageDTO updatedProfileMessageDTO) {
         try {
             LOGGER.info("Received message: {}", updatedProfileMessageDTO.toString());
 
@@ -60,11 +60,15 @@ public class AuthMessageHandlerService {
 
                 Optional.ofNullable(updatedProfileMessageDTO.getName()).ifPresent(user::setName);
                 Optional.ofNullable(updatedProfileMessageDTO.getSurname()).ifPresent(user::setSurname);
+                Optional.of(updatedProfileMessageDTO.isEnabled()).ifPresent(user::setEnabled);
                 userRepository.save(user);
                 LOGGER.info("User saved: {}", user.toString());
 
                 if (!"ADMIN".equals(updatedProfileMessageDTO.getRole())) {
-                    UserExtraInfo userExtraInfo = new UserExtraInfo();
+                    UserExtraInfo userExtraInfo = userExtraInfoRepository.findByUserId(user.getId());
+                    if (userExtraInfo == null) {
+                        userExtraInfo = new UserExtraInfo();
+                    }
                     Optional.ofNullable(user.getId()).ifPresent(userExtraInfo::setUserId);
                     Optional.ofNullable(updatedProfileMessageDTO.getResidenceCity()).ifPresent(userExtraInfo::setResidenceCity);
                     Optional.ofNullable(updatedProfileMessageDTO.getResidenceAddress()).ifPresent(userExtraInfo::setResidenceAddress);

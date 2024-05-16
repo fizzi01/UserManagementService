@@ -59,7 +59,7 @@ public class UserManagementController {
     public UserDTO getUserByEmail(@PathVariable String email) throws UserNotFoundException {
         User user = userService.getUserByEmail(email);
         if(user == null) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("User not found with email: " + email);
         }
 
         return userService.domainToDto(user);

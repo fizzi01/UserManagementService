@@ -28,7 +28,7 @@ public class SecurityMessageHandlerService {
 
         User user = userService.getUserByEmail(email);
         if(user == null) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("User not found with email: " + email);
         }
 
         LOGGER.info(String.format("User %s found", email));

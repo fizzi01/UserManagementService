@@ -102,7 +102,7 @@ public class RabbitMQConfig {
     @Bean
     public Binding updatedDataBinding() {
         return BindingBuilder
-                .bind(updatedDataExchange())
+                .bind(updatedDataQueue())
                 .to(updatedDataExchange())
                 .with(updatedDataRoutingKey);
     }
