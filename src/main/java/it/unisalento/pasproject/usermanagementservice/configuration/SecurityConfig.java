@@ -1,5 +1,6 @@
 package it.unisalento.pasproject.usermanagementservice.configuration;
 
+import it.unisalento.pasproject.usermanagementservice.security.ExceptionFilter;
 import it.unisalento.pasproject.usermanagementservice.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,8 +9,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -26,11 +27,6 @@ public class SecurityConfig {
      */
    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        /*http.authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/users/**").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));*/
 
         // Configurazione CORS
         http.cors(AbstractHttpConfigurer::disable); // Disabilita CORS, se necessario
@@ -38,7 +34,13 @@ public class SecurityConfig {
         // Configurazione CSRF
         http.csrf(AbstractHttpConfigurer::disable); // Disabilita CSRF
 
-        return http.build();
+        // Configurazione gestione eccezioni, adatta la gestione eccezioni al Servlet (carica prima degli altri componenti)
+        http.addFilterBefore(exceptionFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
+       return http.build();
     }
 
     @Bean
@@ -50,4 +52,10 @@ public class SecurityConfig {
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
+
+    @Bean
+    public ExceptionFilter exceptionFilter() {
+        return new ExceptionFilter();
+    }
+
 }
