@@ -9,13 +9,11 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class CustomUserDetailsService {
-
-
+public class UserCheckService {
     private final UserRepository userRepository;
 
     @Autowired
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public UserCheckService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

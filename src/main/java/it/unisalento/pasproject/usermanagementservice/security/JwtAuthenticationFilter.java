@@ -3,7 +3,7 @@ package it.unisalento.pasproject.usermanagementservice.security;
 import it.unisalento.pasproject.usermanagementservice.domain.User;
 import it.unisalento.pasproject.usermanagementservice.exceptions.AccessDeniedException;
 import it.unisalento.pasproject.usermanagementservice.exceptions.UserNotAuthorizedException;
-import it.unisalento.pasproject.usermanagementservice.service.CustomUserDetailsService;
+import it.unisalento.pasproject.usermanagementservice.service.UserCheckService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtUtilities jwtUtilities ;
 
     @Autowired
-    private CustomUserDetailsService customerUserDetailsService ;
+    private UserCheckService customerUserDetailsService ;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -61,8 +61,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             } else {
-            throw new UserNotAuthorizedException("User not authorized");
-        }
+                throw new UserNotAuthorizedException("User not authorized");
+            }
         }
         chain.doFilter(request, response);
     }
