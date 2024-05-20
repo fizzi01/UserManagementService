@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 username = jwtUtilities.extractUsername(jwt);
             }
         } catch (Exception e) {
+            chain.doFilter(request, response);
             throw new AccessDeniedException("Invalid token");
         }
 
@@ -61,6 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             } else {
+                chain.doFilter(request, response);
                 throw new UserNotAuthorizedException("User not authorized");
             }
         }
