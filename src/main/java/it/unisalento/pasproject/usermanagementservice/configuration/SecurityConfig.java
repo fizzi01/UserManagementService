@@ -35,7 +35,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable); // Disabilita CSRF
 
         // Configurazione gestione eccezioni, adatta la gestione eccezioni al Servlet (carica prima degli altri componenti)
-        http.addFilterBefore(exceptionFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(exceptionFilter(), ExceptionFilter.class);
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
