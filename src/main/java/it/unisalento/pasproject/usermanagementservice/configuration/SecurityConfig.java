@@ -2,6 +2,7 @@ package it.unisalento.pasproject.usermanagementservice.configuration;
 
 import it.unisalento.pasproject.usermanagementservice.security.ExceptionFilter;
 import it.unisalento.pasproject.usermanagementservice.security.JwtAuthenticationFilter;
+import jakarta.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -35,7 +37,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable); // Disabilita CSRF
 
         // Configurazione gestione eccezioni, adatta la gestione eccezioni al Servlet (carica prima degli altri componenti)
-        http.addFilterBefore(exceptionFilter(), ExceptionFilter.class);
+        http.addFilterBefore(exceptionFilter(), JwtAuthenticationFilter.class);
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
