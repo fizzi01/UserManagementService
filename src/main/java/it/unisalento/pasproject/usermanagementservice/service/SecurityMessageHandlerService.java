@@ -26,21 +26,26 @@ public class SecurityMessageHandlerService {
     // Metodo per gestire la richiesta in maniera generica
     private UserSecurityDTO handleRequest(String email) throws UserNotFoundException {
 
-        User user = userService.getUserByEmail(email);
-        if(user == null) {
-            throw new UserNotFoundException("User not found with email: " + email);
+        try {
+            User user = userService.getUserByEmail(email);
+            if (user == null) {
+                throw new UserNotFoundException("User not found with email: " + email);
+            }
+
+            LOGGER.info(String.format("User %s found", email));
+
+            UserSecurityDTO userSecurityDTO = new UserSecurityDTO();
+            userSecurityDTO.setEmail(user.getEmail());
+            userSecurityDTO.setRole(user.getRole());
+            userSecurityDTO.setEnabled(user.getEnabled());
+
+            LOGGER.info(String.format("User %s processed", userSecurityDTO));
+
+            return userSecurityDTO;
+        } catch (UserNotFoundException e) {
+            LOGGER.error(e.getMessage());
+            return null;
         }
-
-        LOGGER.info(String.format("User %s found", email));
-
-        UserSecurityDTO userSecurityDTO = new UserSecurityDTO();
-        userSecurityDTO.setEmail(user.getEmail());
-        userSecurityDTO.setRole(user.getRole());
-        userSecurityDTO.setEnabled(user.getEnabled());
-
-        LOGGER.info(String.format("User %s processed", userSecurityDTO));
-
-        return userSecurityDTO;
     }
 
 }
