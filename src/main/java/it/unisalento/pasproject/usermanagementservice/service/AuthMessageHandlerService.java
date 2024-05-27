@@ -33,19 +33,24 @@ public class AuthMessageHandlerService {
     public void receiveMessage(UserDTO userDTO) {
         // Convert UserDTO to User
         LOGGER.info("Received message: {}", userDTO.toString());
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByEmail(userDTO.getEmail()));
 
-        User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setName(userDTO.getName());
-        user.setSurname(userDTO.getSurname());
-        user.setRole(userDTO.getRole());
-        user.setEnabled(true);
-        user.setRegistrationDate(userDTO.getRegistrationDate());
+        if (optionalUser.isPresent()) {
+            LOGGER.error("User already exists: {}", userDTO.getEmail());
+        } else {
+            User user = new User();
+            user.setEmail(userDTO.getEmail());
+            user.setName(userDTO.getName());
+            user.setSurname(userDTO.getSurname());
+            user.setRole(userDTO.getRole());
+            user.setEnabled(true);
+            user.setRegistrationDate(userDTO.getRegistrationDate());
 
-        LOGGER.info("User domain: {}", user.toString());
+            LOGGER.info("User domain: {}", user.toString());
 
-        // Save User to MongoDB
-        userService.createUser(user);
+            // Save User to MongoDB
+            userService.createUser(user);
+        }
     }
 
     @RabbitListener(queues = "${rabbitmq.queue.update.name}")
