@@ -42,7 +42,7 @@ public class SecurityMessageHandlerService {
             LOGGER.info(String.format("User %s processed", userSecurityDTO));
 
             return userSecurityDTO;
-        } catch (UserNotFoundException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
