@@ -40,31 +40,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwt = null;
+        String role = null;
 
         try {
-            LOGGER.info("Extracting username from JWT token");
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
                 username = jwtUtilities.extractUsername(jwt);
+                role = jwtUtilities.extractRole(jwt);
             } else {
-                LOGGER.info("Missing token");
                 throw new AccessDeniedException("Missing token");
             }
         } catch (Exception e) {
-            throw new AccessDeniedException(e.getMessage());
+            throw new AccessDeniedException("Invalid token: " + e.getMessage());
         }
 
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             LOGGER.info("Checking user details");
             User user = this.customerUserDetailsService.loadUserByUsername(username);
+
+            String userEmail;
+            String userRole;
+            boolean userEnabled;
+
+            // Se token valido e risposta del cqrs null, si assume che l'utente sia l'email del token
+            if (user == null){
+                LOGGER.info("User not found in CQRS, assuming user is the email from the token");
+                userEmail = username;
+                userRole = role;
+                userEnabled = true;
+            }else {
+                userEmail = user.getEmail();
+                userRole = user.getRole();
+                userEnabled = user.getEnabled();
+            }
+
             UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                    .username(user.getEmail()) // Assume email is username
+                    .username(userEmail) // Assume email is username
                     .password("") // Password field is not used in JWT authentication
-                    .authorities(user.getRole()) // Set roles or authorities from the UserDetailsDTO
+                    .authorities(userRole) // Set roles or authorities from the UserDetailsDTO
                     .build();
 
-            if (jwtUtilities.validateToken(jwt, userDetails) && user.getEnabled()) {
+            if (jwtUtilities.validateToken(jwt, userDetails, userRole) && userEnabled) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
