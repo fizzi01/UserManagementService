@@ -18,29 +18,34 @@ public class SecurityMessageHandlerService {
 
     // Listener generico che processa richieste di qualsiasi tipo
     @RabbitListener(queues = "${rabbitmq.queue.security.name}")
-    public UserSecurityDTO processRequest(String message) throws UserNotFoundException {
+    public UserSecurityDTO processRequest(String message) {
         LOGGER.info(String.format("Received message: %s", message));
         return handleRequest(message);
     }
 
     // Metodo per gestire la richiesta in maniera generica
-    private UserSecurityDTO handleRequest(String email) throws UserNotFoundException {
+    private UserSecurityDTO handleRequest(String email){
 
-        User user = userService.getUserByEmail(email);
-        if(user == null) {
-            throw new UserNotFoundException("User not found with email: " + email);
+        try {
+            User user = userService.getUserByEmail(email);
+            if (user == null) {
+                return null;
+            }
+
+            LOGGER.info(String.format("User %s found", email));
+
+            UserSecurityDTO userSecurityDTO = new UserSecurityDTO();
+            userSecurityDTO.setEmail(user.getEmail());
+            userSecurityDTO.setRole(user.getRole());
+            userSecurityDTO.setEnabled(user.getEnabled());
+
+            LOGGER.info(String.format("User %s processed", userSecurityDTO));
+
+            return userSecurityDTO;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
         }
-
-        LOGGER.info(String.format("User %s found", email));
-
-        UserSecurityDTO userSecurityDTO = new UserSecurityDTO();
-        userSecurityDTO.setEmail(user.getEmail());
-        userSecurityDTO.setRole(user.getRole());
-        userSecurityDTO.setEnabled(user.getEnabled());
-
-        LOGGER.info(String.format("User %s processed", userSecurityDTO));
-
-        return userSecurityDTO;
     }
 
 }
