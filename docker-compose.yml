@@ -31,9 +31,6 @@ services:
 
 networks:
   userman-net:
-    name: userman_net
-    driver:
-      "bridge"
 
 volumes:
     mongo_userman:
