@@ -6,24 +6,29 @@ import it.unisalento.pasproject.usermanagementservice.dto.UserDTO;
 import it.unisalento.pasproject.usermanagementservice.dto.UserFilterDTO;
 import it.unisalento.pasproject.usermanagementservice.dto.UserListDTO;
 import it.unisalento.pasproject.usermanagementservice.exceptions.UserNotFoundException;
+import it.unisalento.pasproject.usermanagementservice.service.UserCheckService;
 import it.unisalento.pasproject.usermanagementservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static it.unisalento.pasproject.usermanagementservice.security.SecurityConstants.ROLE_ADMIN;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserManagementController {
 
     private final UserService userService;
+    private final UserCheckService userCheckService;
 
     @Autowired
-    public UserManagementController(UserService userService) {
+    public UserManagementController(UserService userService, UserCheckService userCheckService) {
         this.userService = userService;
+        this.userCheckService = userCheckService;
     }
 
     /**
@@ -31,6 +36,7 @@ public class UserManagementController {
      * @return UserListDTO containing a list of all users.
      */
     @GetMapping
+    @Secured({ROLE_ADMIN})
     public UserListDTO getAllUsers() {
         UserListDTO userListDTO = new UserListDTO();
         ArrayList<UserDTO> list = new ArrayList<>();
@@ -57,13 +63,21 @@ public class UserManagementController {
      */
     @GetMapping("/{email}")
     public UserDTO getUserByEmail(@PathVariable String email) throws UserNotFoundException {
+
+        //Controllo che l'utente corrisponda a quello richiesto a meno che non sia admin
+        if (!userCheckService.isAdministrator() && !userCheckService.isCorrectUser(email)) {
+            throw new UserNotFoundException("User not allowed to access user with email: " + email);
+        }
+
         User user = userService.getUserByEmail(email);
+
         if(user == null) {
             throw new UserNotFoundException("User not found with email: " + email);
         }
 
         return userService.domainToDto(user);
     }
+
 
 
     /**
@@ -76,6 +90,7 @@ public class UserManagementController {
      * @return UserListDTO containing a list of users that match the filters.
      */
     @GetMapping("/find")
+    @Secured({ROLE_ADMIN})
     public UserListDTO getByFilters(@RequestParam(required = false) String email,
                                     @RequestParam(required = false) String name,
                                     @RequestParam(required = false) String surname,
@@ -101,6 +116,7 @@ public class UserManagementController {
      * @return UserListDTO containing a list of users that match the filters.
      */
     @PostMapping(value = "/find", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({ROLE_ADMIN})
     public UserListDTO getByFilters(@RequestBody UserFilterDTO filter) {
         UserListDTO userListDTO = new UserListDTO();
         ArrayList<UserDTO> list = new ArrayList<>();
