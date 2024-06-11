@@ -74,8 +74,13 @@ public class UserManagementController {
         if(user == null) {
             throw new UserNotFoundException("User not found with email: " + email);
         }
+        UserDTO userDTO = userService.domainToDto(user);
+        UserExtraInfo userExtraInfo = userService.getUserExtraInfoByUserId(user.getId());
+        if (userExtraInfo != null) {
+            userDTO = userService.domainToDto(userDTO, userExtraInfo);
+        }
 
-        return userService.domainToDto(user);
+        return userDTO;
     }
 
 
@@ -103,7 +108,12 @@ public class UserManagementController {
 
         List<User> users = userService.findUsers(email, name, surname, role, enabled);
         for (User user : users) {
-            list.add(userService.domainToDto(user));
+            UserDTO userDTO = userService.domainToDto(user);
+            UserExtraInfo userExtraInfo = userService.getUserExtraInfoByUserId(user.getId());
+            if (userExtraInfo != null) {
+                userDTO = userService.domainToDto(userDTO, userExtraInfo);
+            }
+            list.add(userDTO);
         }
 
         return userListDTO;
@@ -124,7 +134,12 @@ public class UserManagementController {
 
         List<User> users = userService.findUsers(filter.getEmail(), filter.getName(), filter.getSurname(), filter.getRole(), filter.getEnabled());
         for (User user : users) {
-            list.add(userService.domainToDto(user));
+            UserDTO userDTO = userService.domainToDto(user);
+            UserExtraInfo userExtraInfo = userService.getUserExtraInfoByUserId(user.getId());
+            if (userExtraInfo != null) {
+                userDTO = userService.domainToDto(userDTO, userExtraInfo);
+            }
+            list.add(userDTO);
         }
 
         return userListDTO;

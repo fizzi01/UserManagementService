@@ -128,11 +128,25 @@ public class UserService {
      */
     public UserDTO domainToDto(User user) {
         UserDTO userDTO = new UserDTO();
+
+        //private String email;
+        //    private String name;
+        //    private String surname;
+        //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+        //    private LocalDateTime registrationDate;
+        //    private String role;
+        //    private String residenceCity;
+        //    private String residenceAddress;
+        //    private String phoneNumber;
+        //    private String fiscalCode;
+        //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+        //    private LocalDateTime birthDate;
         Optional.ofNullable(user.getEmail()).ifPresent(userDTO::setEmail);
         Optional.ofNullable(user.getName()).ifPresent(userDTO::setName);
         Optional.ofNullable(user.getSurname()).ifPresent(userDTO::setSurname);
         Optional.ofNullable(user.getRegistrationDate()).ifPresent(userDTO::setRegistrationDate);
         Optional.ofNullable(user.getRole()).ifPresent(userDTO::setRole);
+
         return userDTO;
     }
 
