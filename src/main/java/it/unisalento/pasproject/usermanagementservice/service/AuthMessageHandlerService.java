@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static it.unisalento.pasproject.usermanagementservice.security.SecurityConstants.ROLE_ADMIN;
+
 @Service
 public class AuthMessageHandlerService {
     private final UserService userService;
@@ -69,7 +71,7 @@ public class AuthMessageHandlerService {
                 userRepository.save(user);
                 LOGGER.info("User saved: {}", user.toString());
 
-                if (!"ADMIN".equals(updatedProfileMessageDTO.getRole())) {
+                if (!ROLE_ADMIN.equals(updatedProfileMessageDTO.getRole())) {
                     UserExtraInfo userExtraInfo = userExtraInfoRepository.findByUserId(user.getId());
                     if (userExtraInfo == null) {
                         userExtraInfo = new UserExtraInfo();

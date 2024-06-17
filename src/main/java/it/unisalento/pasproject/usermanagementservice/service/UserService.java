@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -112,11 +113,8 @@ public class UserService {
         if (role != null) {
             query.addCriteria(Criteria.where("role").is(role));
         }
-        if(enabled != null){
-            query.addCriteria(Criteria.where("enabled").is(enabled));
-        } else {
-            query.addCriteria(Criteria.where("enabled").is(true));
-        }
+
+        query.addCriteria(Criteria.where("enabled").is(Objects.requireNonNullElse(enabled, true)));
 
         return mongoTemplate.find(query, User.class);
     }
@@ -129,18 +127,6 @@ public class UserService {
     public UserDTO domainToDto(User user) {
         UserDTO userDTO = new UserDTO();
 
-        //private String email;
-        //    private String name;
-        //    private String surname;
-        //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-        //    private LocalDateTime registrationDate;
-        //    private String role;
-        //    private String residenceCity;
-        //    private String residenceAddress;
-        //    private String phoneNumber;
-        //    private String fiscalCode;
-        //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-        //    private LocalDateTime birthDate;
         Optional.ofNullable(user.getEmail()).ifPresent(userDTO::setEmail);
         Optional.ofNullable(user.getName()).ifPresent(userDTO::setName);
         Optional.ofNullable(user.getSurname()).ifPresent(userDTO::setSurname);
