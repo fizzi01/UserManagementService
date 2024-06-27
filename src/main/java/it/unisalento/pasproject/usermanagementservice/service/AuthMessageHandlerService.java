@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static it.unisalento.pasproject.usermanagementservice.security.SecurityConstants.ROLE_ADMIN;
+import static it.unisalento.pasproject.usermanagementservice.security.SecurityConstants.*;
 
 @Service
 public class AuthMessageHandlerService {
@@ -71,19 +71,39 @@ public class AuthMessageHandlerService {
                 userRepository.save(user);
                 LOGGER.info("User saved: {}", user.toString());
 
-                if (!ROLE_ADMIN.equals(updatedProfileMessageDTO.getRole())) {
-                    UserExtraInfo userExtraInfo = userExtraInfoRepository.findByUserId(user.getId());
-                    if (userExtraInfo == null) {
-                        userExtraInfo = new UserExtraInfo();
+                switch (updatedProfileMessageDTO.getRole()) {
+                    case ROLE_MEMBRO -> {
+                        UserExtraInfo userExtraInfo = userExtraInfoRepository.findByUserId(user.getId());
+                        if (userExtraInfo == null) {
+                            userExtraInfo = new UserExtraInfo();
+                        }
+                        Optional.ofNullable(user.getId()).ifPresent(userExtraInfo::setUserId);
+                        Optional.ofNullable(updatedProfileMessageDTO.getResidenceCity()).ifPresent(userExtraInfo::setResidenceCity);
+                        Optional.ofNullable(updatedProfileMessageDTO.getResidenceAddress()).ifPresent(userExtraInfo::setResidenceAddress);
+                        Optional.ofNullable(updatedProfileMessageDTO.getPhoneNumber()).ifPresent(userExtraInfo::setPhoneNumber);
+                        Optional.ofNullable(updatedProfileMessageDTO.getFiscalCode()).ifPresent(userExtraInfo::setFiscalCode);
+                        Optional.ofNullable(updatedProfileMessageDTO.getBirthDate()).ifPresent(userExtraInfo::setBirthDate);
+                        userExtraInfoRepository.save(userExtraInfo);
+                        LOGGER.info("Extra info saved: {}", userExtraInfo);
                     }
-                    Optional.ofNullable(user.getId()).ifPresent(userExtraInfo::setUserId);
-                    Optional.ofNullable(updatedProfileMessageDTO.getResidenceCity()).ifPresent(userExtraInfo::setResidenceCity);
-                    Optional.ofNullable(updatedProfileMessageDTO.getResidenceAddress()).ifPresent(userExtraInfo::setResidenceAddress);
-                    Optional.ofNullable(updatedProfileMessageDTO.getPhoneNumber()).ifPresent(userExtraInfo::setPhoneNumber);
-                    Optional.ofNullable(updatedProfileMessageDTO.getFiscalCode()).ifPresent(userExtraInfo::setFiscalCode);
-                    Optional.ofNullable(updatedProfileMessageDTO.getBirthDate()).ifPresent(userExtraInfo::setBirthDate);
-                    userExtraInfoRepository.save(userExtraInfo);
-                    LOGGER.info("Extra info saved: {}", userExtraInfo.toString());
+                    case ROLE_UTENTE -> {
+                        UserExtraInfo userExtraInfo = userExtraInfoRepository.findByUserId(user.getId());
+                        if (userExtraInfo == null) {
+                            userExtraInfo = new UserExtraInfo();
+                        }
+                        Optional.ofNullable(user.getId()).ifPresent(userExtraInfo::setUserId);
+                        Optional.ofNullable(updatedProfileMessageDTO.getResidenceCity()).ifPresent(userExtraInfo::setResidenceCity);
+                        Optional.ofNullable(updatedProfileMessageDTO.getResidenceAddress()).ifPresent(userExtraInfo::setResidenceAddress);
+                        Optional.ofNullable(updatedProfileMessageDTO.getPhoneNumber()).ifPresent(userExtraInfo::setPhoneNumber);
+                        Optional.ofNullable(updatedProfileMessageDTO.getFiscalCode()).ifPresent(userExtraInfo::setFiscalCode);
+                        Optional.ofNullable(updatedProfileMessageDTO.getBirthDate()).ifPresent(userExtraInfo::setBirthDate);
+                        Optional.ofNullable(updatedProfileMessageDTO.getCardNumber()).ifPresent(userExtraInfo::setCardNumber);
+                        Optional.ofNullable(updatedProfileMessageDTO.getCardExpiryDate()).ifPresent(userExtraInfo::setCardExpiryDate);
+                        Optional.ofNullable(updatedProfileMessageDTO.getCardCvv()).ifPresent(userExtraInfo::setCardCvv);
+                        userExtraInfoRepository.save(userExtraInfo);
+                        LOGGER.info("Extra info saved: {}", userExtraInfo);
+                    }
+                    default -> {}
                 }
             } else {
                 LOGGER.error("No user found with email: {}", updatedProfileMessageDTO.getEmail());
@@ -92,5 +112,4 @@ public class AuthMessageHandlerService {
             LOGGER.error("Error processing message: ", e);
         }
     }
-
 }

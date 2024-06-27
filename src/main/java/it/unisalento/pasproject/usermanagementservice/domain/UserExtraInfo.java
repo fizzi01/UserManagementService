@@ -20,4 +20,7 @@ public class UserExtraInfo {
     private String phoneNumber;
     private String fiscalCode;
     private LocalDateTime birthDate;
+    private String cardNumber;
+    private String cardExpiryDate;
+    private String cardCvv;
 }
