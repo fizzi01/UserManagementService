@@ -22,4 +22,7 @@ public class UserDTO {
     private String fiscalCode;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime birthDate;
+    private String cardNumber;
+    private String cardExpiryDate;
+    private String cardCvv;
 }
