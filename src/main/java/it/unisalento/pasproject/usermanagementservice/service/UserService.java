@@ -142,6 +142,10 @@ public class UserService {
         Optional.ofNullable(userExtraInfo.getPhoneNumber()).ifPresent(userDTO::setPhoneNumber);
         Optional.ofNullable(userExtraInfo.getFiscalCode()).ifPresent(userDTO::setFiscalCode);
         Optional.ofNullable(userExtraInfo.getBirthDate()).ifPresent(userDTO::setBirthDate);
+        Optional.ofNullable(userExtraInfo.getCardNumber()).ifPresent(userDTO::setCardNumber);
+        Optional.ofNullable(userExtraInfo.getCardExpiryDate()).ifPresent(userDTO::setCardExpiryDate);
+        Optional.ofNullable(userExtraInfo.getCardCvv()).ifPresent(userDTO::setCardCvv);
+
         return userDTO;
     }
 }
