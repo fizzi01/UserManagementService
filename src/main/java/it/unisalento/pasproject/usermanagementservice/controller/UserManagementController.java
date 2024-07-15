@@ -46,6 +46,7 @@ public class UserManagementController {
         for (User user : users) {
             UserDTO userDTO = userService.domainToDto(user);
             UserExtraInfo userExtraInfo = userService.getUserExtraInfoByUserId(user.getId());
+
             if (userExtraInfo != null) {
                 userDTO = userService.domainToDto(userDTO, userExtraInfo);
             }
@@ -74,8 +75,10 @@ public class UserManagementController {
         if(user == null) {
             throw new UserNotFoundException("User not found with email: " + email);
         }
+
         UserDTO userDTO = userService.domainToDto(user);
         UserExtraInfo userExtraInfo = userService.getUserExtraInfoByUserId(user.getId());
+
         if (userExtraInfo != null) {
             userDTO = userService.domainToDto(userDTO, userExtraInfo);
         }
